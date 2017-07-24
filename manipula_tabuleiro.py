@@ -37,7 +37,8 @@ def remove_wumpus_e_limpa():
     matriz_tabuleiro[i].wumpus = False
     matriz_tabuleiro[i].atualiza_grito(True)
     matriz_tabuleiro[i].atualiza_fedor(False)
-    print(matriz_tabuleiro[i])
+    if matriz_tabuleiro[i].status == 'SUSPEITO-WUMPUS':
+      matriz_tabuleiro[i].atualiza_status('SEGURO')
 
 def get_tabuleiro():
   return matriz_tabuleiro

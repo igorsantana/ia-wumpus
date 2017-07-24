@@ -41,23 +41,27 @@ class Base:
     if todos_x('SUSPEITO-WUMPUS', adj) == True:
       return 'ACTION;{};{}'.format('ATIRAR', prox_direcao(index_atual, menor_passagem(adj).index))
     
-    return 'X'
+    return 'MOVE;X'
 
-  def tell(self, sala_atual):
+  def tell(self, sala_atual, sala_antiga):
     adj    = adjacentes(matriz_tabuleiro, sala_atual.index)
     [i, j] = index_pos(sala_atual.index)
     sala   = get_sala(i, j)
+
     self.tabuleiro[sala_atual.index].atualiza_passagens(self.tabuleiro[sala_atual.index].passagens + 1)
     self.tabuleiro[sala_atual.index].atualiza_status("SEGURO")
-
-    for i in range(len(adj)):
-      [x, y]   = index_pos(adj[i].index)
-      if (sala.sensores[0] == True):
-        self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-WUMPUS")
-      if (sala.sensores[1] == True):
-        self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-POCO")
-      if(sala.sensores[0] == False) and (sala.sensores[1] == False):
-        self.tabuleiro[pos_index(x, y)].atualiza_status("SEGURO")
+    
+    for k in range(len(adj)):
+      [x, y]   = index_pos(adj[k].index)
+      if adj[k].index != sala_antiga.index:
+        if (sala.sensores[0] == True):
+          print('{} foi marcado como suspeito de wumpus'.format([x, y]))
+          self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-WUMPUS")
+        if (sala.sensores[1] == True):
+          print('{} foi marcado como suspeito de poco'.format([x, y]))
+          self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-POCO")
+        if(sala.sensores[0] == False) and (sala.sensores[1] == False):
+            self.tabuleiro[pos_index(x, y)].atualiza_status("SEGURO")
       
     return 0
   
