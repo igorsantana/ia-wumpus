@@ -26,6 +26,18 @@ def pos_index(i, j):
 def get_sala(i, j):
   return matriz_tabuleiro[pos_index(i, j)]
 
+def get_wumpus():
+  for i in range(len(matriz_tabuleiro)):
+    if matriz_tabuleiro[i].wumpus == True:
+      return index_pos(matriz_tabuleiro[i].index)
+  return [-1, -1]
+
+def remove_wumpus_e_limpa():
+  for i in range(len(matriz_tabuleiro)):
+    matriz_tabuleiro[i].wumpus = False
+    matriz_tabuleiro[i].atualiza_grito(True)
+    matriz_tabuleiro[i].atualiza_fedor(False)
+    print(matriz_tabuleiro[i])
 
 def get_tabuleiro():
   return matriz_tabuleiro
@@ -45,3 +57,29 @@ def adjacentes(tabuleiro, indice):
     [i, j] = index_pos(indice + 1)
     adjacentes.append(tabuleiro[pos_index(i, j)])
   return adjacentes
+
+def atirar(index, direcao):
+  [i, j] = index_pos(index)
+  resultado = 'ERROU'
+  if direcao == 'C':
+    for x in range(i , 5):
+      if([x, j] == get_wumpus()):
+        resultado = 'MATOU'
+        break
+  if direcao == 'B':
+    for x in range(1, 4):
+      if([i - x, j] == get_wumpus()):
+        resultado = 'MATOU'
+        break
+  if direcao == 'D':
+    for x in range(i + 1, 5):
+      if([i, x] == get_wumpus()):
+        resultado = 'MATOU'
+        break
+  if direcao == 'E':
+    for x in range(1, 4):
+      if([i, j - x] == get_wumpus()):
+        resultado = 'MATOU'  
+        break    
+  if resultado == 'MATOU': remove_wumpus_e_limpa()
+  return resultado

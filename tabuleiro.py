@@ -4,10 +4,13 @@ def pr(value):
   return 'F' if value == False else 'T'
 
 
+
+
+
 class Sala:
   def __init__(self):
     # Fedor, Brisa, Brilho, Grito
-    self.sensores = [False,False,False ,False]
+    self.sensores = [False,False,False,False]
     self.adjacentes = []
     self.wumpus     = False
     self.ouro       = False
@@ -23,6 +26,8 @@ class Sala:
     self.sensores[1] = brisa
   def atualiza_brilho(self, brilho):
     self.sensores[2] = brilho
+  def atualiza_grito(self, grito):
+    self.sensores[3] = grito
   def atualiza_status(self, status):
     self.status = status
   def atualiza_passagens(self, i):

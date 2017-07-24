@@ -3,12 +3,12 @@ from manipula_tabuleiro import index_pos, pos_index, get_sala, print_tt, get_tab
 
 matriz_tabuleiro = novo_tabuleiro()
 
-def todos_seguros(adj):
-  todos_seguros = True
+def todos_x(strc, adj):
+  todos_x = True
   for i in range(len(adj)):
-    if adj[i].status != 'SEGURO':
-      todos_seguros = False
-  return todos_seguros
+    if adj[i].status != strc:
+      todos_x = False
+  return todos_x  
 
 def menor_passagem(adj):
   menor_adj = adj[0]
@@ -32,12 +32,15 @@ class Base:
     self.tabuleiro  = novo_tabuleiro()
        
   def ask(self, index_atual):
-    adj    = adjacentes(self.tabuleiro, index_atual)
+    adj  = adjacentes(self.tabuleiro, index_atual)
 
-    if todos_seguros(adj) == True:
-      return prox_direcao(index_atual, menor_passagem(adj).index)
-
-
+    if todos_x('SEGURO', adj) == True:
+      return 'MOVE;{}'.format(prox_direcao(index_atual, menor_passagem(adj).index))
+    if todos_x('SUSPEITO-POCO', adj) == True:
+      return 'MOVE;{}'.format(prox_direcao(index_atual, menor_passagem(adj).index))
+    if todos_x('SUSPEITO-WUMPUS', adj) == True:
+      return 'ACTION;{};{}'.format('ATIRAR', prox_direcao(index_atual, menor_passagem(adj).index))
+    
     return 'X'
 
   def tell(self, sala_atual):
