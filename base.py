@@ -14,6 +14,7 @@ def menor_pass(adj):
   for i in range(1,len(adj)):
     if adj[i].passagens < menor_adj.passagens: menor_adj = adj[i]
   return menor_adj
+
 def prox_direcao(atual, prox):
   if (atual - 4) == prox: return 'C'
   if (atual + 4) == prox: return 'B'
@@ -31,7 +32,14 @@ class Base:
       return len(filter(lambda x: x.index == index_sala, self.seguros)) > 0
     if arr == 'nvisitados':
       return len(filter(lambda x: x.index == index_sala, self.seguros_n_visitados)) > 0
-
+  def analisa_adjacentes(self, adj):
+    suspeitos = nao_visitados = visitados = []
+    suspeitos     = filter(lambda x: x.status.startswith('SUSPEITO'), adj)
+    nao_visitados = filter(lambda x: self.in_arr(x.index, 'nvisitados'), adj)
+    visitados     = filter(lambda x: self.in_arr(x.index, 'seguros'), adj)
+    return [suspeitos, nao_visitados, visitados]
+  def not_in_seguros_and_nvisitados(self, i, j):
+    return (not self.in_arr(pos_index(i, j),'nvisitados')) and (not self.in_arr(pos_index(i, j),'seguros'))
   def ask(self, index_atual):
     adj = adjacentes(self.tabuleiro, index_atual)
     
@@ -43,9 +51,22 @@ class Base:
     if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
     if every('SUSPEITO-WUMPUS', adj) == True: return 'ACTION;{};{}'.format('ATIRAR', prox_direcao(index_atual, menor_pass(adj).index))
 
-
+    [suspeitos, nao_visitados, visitados] = self.analisa_adjacentes(adj)
+    if len(suspeitos) <= (len(adj) - 1):
+      if len(nao_visitados) > 0:
+        return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(nao_visitados).index))
+      if len(visitados) > 0:
+        return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(visitados).index))
     
-
+    print('Adjacentes:')
+    print_array(adj)
+    print('\n Suspeitos: ')
+    print_array(suspeitos)
+    print('\n Nao visitados:')
+    print_array(nao_visitados)
+    print('\n Visitados:')
+    print_array(visitados)
+    print('\n')
     return 'MOVE;X'
 
   def tell(self, sala, sala_antiga):
@@ -68,8 +89,10 @@ class Base:
     for k in range(len(adj)):
       [x, y]   = index_pos(adj[k].index)
       if adj[k].index != sala_antiga.index:
-        if (sala.sensores[0] == True):                                  self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-WUMPUS")
-        if (sala.sensores[1] == True):                                  self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-POCO")
+        if ((sala.sensores[0] == True) and self.not_in_seguros_and_nvisitados(x, y)):
+          self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-WUMPUS")
+        if ((sala.sensores[1] == True) and self.not_in_seguros_and_nvisitados(x, y)):                                  
+          self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-POCO")
         if (sala.sensores[0] == False) and (sala.sensores[1] == False): self.tabuleiro[pos_index(x, y)].atualiza_status("SEGURO")
     return 0
   
