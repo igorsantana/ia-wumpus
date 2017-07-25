@@ -1,12 +1,12 @@
 from agente             import Agente
 from manipula_tabuleiro import get_sala, print_tt, index_pos
 import time
-
-print_tt()
+import os
 
 agente007 = Agente(get_sala(1, 1))
 
 while True:
+  print_tt(agente007.sala_atual.index)
   agente007.analisa_sala()
   action = agente007.movimentar()
   if action == 'TIRO':
@@ -22,4 +22,5 @@ while True:
     break
   print(action)
   time.sleep(5)
+  os.system('cls' if os.name == 'nt' else 'clear')
   

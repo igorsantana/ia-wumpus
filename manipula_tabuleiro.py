@@ -3,13 +3,19 @@ from tabuleiro  import novo_tabuleiro, print_tabuleiro
 
 matriz_tabuleiro = novo_tabuleiro() 
 
-def print_tt():
+def print_tt(index):
   print('========================================================')
   for i in range(16):
-    print(matriz_tabuleiro[i], end='\t')
+    if(index == i):
+      print('\033[32m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
+    else:
+      print(matriz_tabuleiro[i].__str__(), end='\t')
     if (i+1) % 4 == 0:
       print('\n')
   print('========================================================')
+def print_array(arr):
+  for s in arr:
+    print(s, end='\t')  
 
 def index_pos(index):
   switcher = {

@@ -1,5 +1,5 @@
 from tabuleiro          import novo_tabuleiro
-from manipula_tabuleiro import index_pos, pos_index, get_sala, print_tt, get_tabuleiro, adjacentes
+from manipula_tabuleiro import index_pos, pos_index, get_sala, print_tt, get_tabuleiro, adjacentes, print_array
 
 matriz_tabuleiro = novo_tabuleiro()
 
@@ -14,14 +14,11 @@ def menor_pass(adj):
   for i in range(1,len(adj)):
     if adj[i].passagens < menor_adj.passagens: menor_adj = adj[i]
   return menor_adj
-
 def prox_direcao(atual, prox):
   if (atual - 4) == prox: return 'C'
   if (atual + 4) == prox: return 'B'
   if (atual + 1) == prox: return 'D'
   if (atual - 1) == prox: return 'E'
-
-
 
 class Base:
   def __init__(self):
@@ -37,14 +34,17 @@ class Base:
 
   def ask(self, index_atual):
     adj = adjacentes(self.tabuleiro, index_atual)
-
+    
     if every('SEGURO', adj) == True:     
-      index_para_ir = menor_pass(adj).index
-      pode_ir = filter(lambda adj: (adj.index != index_para_ir) and (not self.in_arr(adj.index, 'seguros')), adj)
+      to_go = menor_pass(adj).index
+      pode_ir = filter(lambda adj: (adj.index != to_go) and (not self.in_arr(adj.index, 'seguros')), adj)
       self.seguros_n_visitados.extend(pode_ir)
-      return 'MOVE;{}'.format(prox_direcao(index_atual, index_para_ir))
+      return 'MOVE;{}'.format(prox_direcao(index_atual, to_go))
     if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
     if every('SUSPEITO-WUMPUS', adj) == True: return 'ACTION;{};{}'.format('ATIRAR', prox_direcao(index_atual, menor_pass(adj).index))
+
+
+    
 
     return 'MOVE;X'
 
@@ -53,14 +53,18 @@ class Base:
     self.tabuleiro[sala.index].atualiza_passagens(self.tabuleiro[sala.index].passagens + 1)
     self.tabuleiro[sala.index].atualiza_status("SEGURO")
     self.seguros.extend([sala])
+
     if self.in_arr(sala.index, 'nvisitados'):
       self.seguros_n_visitados = filter(lambda x: x.index != sala.index, self.seguros_n_visitados)
-    for s in self.seguros:
-      print(s)  
-    print('--------')
-    for s in self.seguros_n_visitados:
-      print(s)  
-    
+
+    print('------------------------------------------')
+    print('Seguros:')
+    print_array(self.seguros)
+    print('\n------------------------------------------')
+    print('Seguros n visitados:')
+    print_array(self.seguros_n_visitados)
+    print('\n------------------------------------------')
+
     for k in range(len(adj)):
       [x, y]   = index_pos(adj[k].index)
       if adj[k].index != sala_antiga.index:
