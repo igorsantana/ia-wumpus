@@ -4,11 +4,12 @@ from tabuleiro  import novo_tabuleiro, print_tabuleiro
 matriz_tabuleiro = novo_tabuleiro() 
 
 def print_tt():
-  print(len(matriz_tabuleiro))
+  print('========================================================')
   for i in range(16):
     print(matriz_tabuleiro[i], end='\t')
     if (i+1) % 4 == 0:
       print('\n')
+  print('========================================================')
 
 def index_pos(index):
   switcher = {

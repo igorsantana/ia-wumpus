@@ -22,23 +22,22 @@ class Agente:
     return loc
   
   def analisa_sala(self):
-    
     self.base.tell(self.sala_atual, self.sala_antiga)
-
+    
   def movimentar(self):
-    if self.sala_atual.ouro == True: return 'OURO'
+    if self.sala_atual.ouro == True:    return 'OURO'
+    if self.sala_atual.poco == True:    return 'MORREU'
+    if self.sala_atual.wumpus == True:  return 'MORREU'
 
     next = self.base.ask(self.sala_atual.index)
     
     if next.startswith('ACTION'):
       [_, action, loc] = next.split(';')
       if action == 'ATIRAR':
-        if(self.tiro == True):
-          resultado = atirar(self.sala_atual.index, loc)
+        if(self.tiro == True): resultado = atirar(self.sala_atual.index, loc)
         self.tiro = False
         return 'TIRO;{};{}'.format(loc,resultado)
     if next.startswith('MOVE'):
       loc = self.mover(next)
-      if loc == 'X':
-        return 'STOP'
+      if loc == 'X': return 'STOP'
       return 'FOI PARA A POSICAO {}, EM DIRECAO A CASA {}'.format(loc, index_pos(self.sala_atual.index))

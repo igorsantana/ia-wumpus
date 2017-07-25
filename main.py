@@ -2,7 +2,6 @@ from agente             import Agente
 from manipula_tabuleiro import get_sala, print_tt, index_pos
 import time
 
-# print("----------------------------------------------------------------")
 print_tt()
 
 agente007 = Agente(get_sala(1, 1))
@@ -17,7 +16,9 @@ while True:
     print('Parou o movimento por causa de implementacao')
   if action == 'OURO':
     print('Achou ouro na casa {}'.format(index_pos(agente007.sala_atual.index)))
-  if action == 'OURO' or action == 'STOP':
+  if action == 'MORREU':
+    print('Agente foi burro e morreu')
+  if action == 'OURO' or action == 'STOP' or action == 'MORREU':
     break
   print(action)
   time.sleep(5)
