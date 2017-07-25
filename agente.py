@@ -1,6 +1,13 @@
 from manipula_tabuleiro import index_pos, get_sala, atirar
 from base               import Base
 
+def next_sala(loc, pos):
+  if loc == 'D': return get_sala(pos[0], pos[1] + 1)
+  if loc == 'E': return get_sala(pos[0], pos[1] - 1)
+  if loc == 'C': return get_sala(pos[0] + 1, pos[1])
+  if loc == 'B': return get_sala(pos[0] - 1, pos[1])
+
+
 class Agente:
   def __init__(self, atual):
     self.caminho      = [atual]
@@ -23,7 +30,7 @@ class Agente:
   
   def analisa_sala(self):
     self.base.tell(self.sala_atual, self.sala_antiga)
-    
+
   def movimentar(self):
     if self.sala_atual.ouro == True:    return 'OURO'
     if self.sala_atual.poco == True:    return 'MORREU'
@@ -34,7 +41,11 @@ class Agente:
     if next.startswith('ACTION'):
       [_, action, loc] = next.split(';')
       if action == 'ATIRAR':
-        if(self.tiro == True): resultado = atirar(self.sala_atual.index, loc)
+        resultado = 'ERROU'
+        if(self.tiro == True): 
+          resultado = atirar(self.base.tabuleiro, self.sala_atual.index, loc)
+          if(resultado == 'ERROU'):
+            self.base.afirma('SEGURO', next_sala(loc, index_pos(self.sala_atual.index)).index)
         self.tiro = False
         return 'TIRO;{};{}'.format(loc,resultado)
     if next.startswith('MOVE'):

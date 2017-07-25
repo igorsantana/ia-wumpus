@@ -1,7 +1,7 @@
-from tabuleiro          import novo_tabuleiro
+from tabuleiro          import novo_tabuleiro_vazio
 from manipula_tabuleiro import index_pos, pos_index, get_sala, print_tt, get_tabuleiro, adjacentes, print_array
 
-matriz_tabuleiro = novo_tabuleiro()
+matriz_tabuleiro = get_tabuleiro()
 
 def every(strc, adj):
   every = True
@@ -23,34 +23,37 @@ def prox_direcao(atual, prox):
 
 class Base:
   def __init__(self):
-    self.tabuleiro            = novo_tabuleiro()
+    self.tabuleiro            = novo_tabuleiro_vazio()
+    self.tabuleiro_real       = matriz_tabuleiro
     self.seguros              = []
     self.seguros_n_visitados  = []
   
   def in_arr(self, index_sala, arr):
-    if arr == 'seguros':
-      return len(list(filter(lambda x: x.index == index_sala, self.seguros))) > 0
-    if arr == 'nvisitados':
-      return len(list(filter(lambda x: x.index == index_sala, self.seguros_n_visitados))) > 0
+    if arr == 'seguros':    return len(list(filter(lambda x: x.index == index_sala, self.seguros))) > 0
+    if arr == 'nvisitados': return len(list(filter(lambda x: x.index == index_sala, self.seguros_n_visitados))) > 0
   def analisa_adjacentes(self, adj):
-    suspeitos = nao_visitados = visitados = []
+    suspeitos     = nao_visitados = visitados = []
     suspeitos     = list(filter(lambda x: x.status.startswith('SUSPEITO'), adj))
     nao_visitados = list(filter(lambda x: self.in_arr(x.index, 'nvisitados'), adj))
     visitados     = list(filter(lambda x: self.in_arr(x.index, 'seguros'), adj))
     return [suspeitos, nao_visitados, visitados]
   def not_in_seguros_and_nvisitados(self, i, j):
     return (not self.in_arr(pos_index(i, j),'nvisitados')) and (not self.in_arr(pos_index(i, j),'seguros'))
+  def afirma(self, status, index):
+    if status == 'SEGURO':
+      self.tabuleiro[index].atualiza_status(status)
+      self.seguros_n_visitados.append(self.tabuleiro[index])
   def ask(self, index_atual):
+
     adj = adjacentes(self.tabuleiro, index_atual)
-    
     if every('SEGURO', adj) == True:     
-      to_go = menor_pass(adj).index
+      to_go   = menor_pass(adj).index
       pode_ir = list(filter(lambda adj: (adj.index != to_go) and (not self.in_arr(adj.index, 'seguros')), adj))
       self.seguros_n_visitados.extend(pode_ir)
       return 'MOVE;{}'.format(prox_direcao(index_atual, to_go))
-    if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
     if every('SUSPEITO-WUMPUS', adj) == True: return 'ACTION;{};{}'.format('ATIRAR', prox_direcao(index_atual, menor_pass(adj).index))
-
+    if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
+    
     [suspeitos, nao_visitados, visitados] = self.analisa_adjacentes(adj)
     if len(suspeitos) <= (len(adj) - 1):
       if len(nao_visitados) > 0:
@@ -58,16 +61,10 @@ class Base:
       if len(visitados) > 0:
         return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(visitados).index))
     
-    print('Adjacentes:')
-    print_array(adj)
-    print('\n Suspeitos: ')
-    print_array(suspeitos)
-    print('\n Nao visitados:')
-    print_array(nao_visitados)
-    print('\n Visitados:')
-    print_array(visitados)
-    print('\n')
+    
     return 'MOVE;X'
+
+
 
   def tell(self, sala, sala_antiga):
     adj = adjacentes(matriz_tabuleiro, sala.index)

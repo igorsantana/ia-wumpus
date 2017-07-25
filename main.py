@@ -6,7 +6,7 @@ import os
 agente007 = Agente(get_sala(1, 1))
 
 while True:
-  print_tt(agente007.sala_atual.index)
+  print_tt(agente007.base.tabuleiro_real, agente007.sala_atual.index)
   agente007.analisa_sala()
   action = agente007.movimentar()
   if action == 'TIRO':

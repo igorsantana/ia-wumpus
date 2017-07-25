@@ -106,9 +106,16 @@ def novo_tabuleiro():
     for j in list(range(4)):
       (tabuleiro[i][j]).adjacentes = adjacentes(tabuleiro, i, j)
       array_tabuleiro.append(tabuleiro[i][j])
-
   return array_tabuleiro
 
+def novo_tabuleiro_vazio():
+  array_tabuleiro = []
+  tabuleiro = cria_tabuleiro()
+  for i in list(range(4)):
+    for j in list(range(4)):
+      (tabuleiro[i][j]).adjacentes = adjacentes(tabuleiro, i, j)
+      array_tabuleiro.append(tabuleiro[i][j])
+  return array_tabuleiro
 
 def index_pos(index):
   switcher = {

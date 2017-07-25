@@ -2,16 +2,18 @@ from tabuleiro  import novo_tabuleiro
 
 matriz_tabuleiro = novo_tabuleiro() 
 
-def print_tt(index):
+
+def print_tt(tabuleiro, index):
   print('========================================================')
   for i in range(16):
     if(index == i):
-      print('\033[32m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
+      print('\033[32m' + tabuleiro[i].__str__() + '\033[0m', end='\t')
     else:
-      print(matriz_tabuleiro[i].__str__(), end='\t')
+      print(tabuleiro[i].__str__(), end='\t')
     if (i+1) % 4 == 0:
       print('\n')
   print('========================================================')
+  
 def print_array(arr):
   for s in arr:
     print(s, end='\t')  
@@ -32,19 +34,19 @@ def pos_index(i, j):
 def get_sala(i, j):
   return matriz_tabuleiro[pos_index(i, j)]
 
-def get_wumpus():
-  for i in range(len(matriz_tabuleiro)):
-    if matriz_tabuleiro[i].wumpus == True:
-      return index_pos(matriz_tabuleiro[i].index)
+def get_wumpus(tabuleiro):
+  for i in range(len(tabuleiro)):
+    if tabuleiro[i].wumpus == True:
+      return index_pos(tabuleiro[i].index)
   return [-1, -1]
 
-def remove_wumpus_e_limpa():
-  for i in range(len(matriz_tabuleiro)):
-    matriz_tabuleiro[i].wumpus = False
-    matriz_tabuleiro[i].atualiza_grito(True)
-    matriz_tabuleiro[i].atualiza_fedor(False)
-    if matriz_tabuleiro[i].status == 'SUSPEITO-WUMPUS':
-      matriz_tabuleiro[i].atualiza_status('SEGURO')
+def remove_wumpus_e_limpa(tabuleiro):
+  for i in range(len(tabuleiro)):
+    tabuleiro[i].wumpus = False
+    tabuleiro[i].atualiza_grito(True)
+    tabuleiro[i].atualiza_fedor(False)
+    if tabuleiro[i].status == 'SUSPEITO-WUMPUS':
+      tabuleiro[i].atualiza_status('SEGURO')
 
 def get_tabuleiro():
   return matriz_tabuleiro
@@ -65,28 +67,28 @@ def adjacentes(tabuleiro, indice):
     adjacentes.append(tabuleiro[pos_index(i, j)])
   return adjacentes
 
-def atirar(index, direcao):
+def atirar(tabuleiro, index, direcao):
   [i, j] = index_pos(index)
   resultado = 'ERROU'
   if direcao == 'C':
     for x in range(i , 5):
-      if([x, j] == get_wumpus()):
+      if([x, j] == get_wumpus(tabuleiro)):
         resultado = 'MATOU'
         break
   if direcao == 'B':
     for x in range(1, 4):
-      if([i - x, j] == get_wumpus()):
+      if([i - x, j] == get_wumpus(tabuleiro)):
         resultado = 'MATOU'
         break
   if direcao == 'D':
     for x in range(i + 1, 5):
-      if([i, x] == get_wumpus()):
+      if([i, x] == get_wumpus(tabuleiro)):
         resultado = 'MATOU'
         break
   if direcao == 'E':
     for x in range(1, 4):
-      if([i, j - x] == get_wumpus()):
+      if([i, j - x] == get_wumpus(tabuleiro)):
         resultado = 'MATOU'  
         break    
-  if resultado == 'MATOU': remove_wumpus_e_limpa()
+  if resultado == 'MATOU': remove_wumpus_e_limpa(tabuleiro)
   return resultado
