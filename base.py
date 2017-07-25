@@ -29,8 +29,9 @@ def prox_direcao(atual, prox):
 
 class Base:
   def __init__(self):
-    self.tabuleiro  = novo_tabuleiro()
-       
+    self.tabuleiro         = novo_tabuleiro()
+    self.seguros           = []
+    self.segurosnvisitados = []
   def ask(self, index_atual):
     adj  = adjacentes(self.tabuleiro, index_atual)
 
@@ -50,7 +51,8 @@ class Base:
 
     self.tabuleiro[sala_atual.index].atualiza_passagens(self.tabuleiro[sala_atual.index].passagens + 1)
     self.tabuleiro[sala_atual.index].atualiza_status("SEGURO")
-    
+    self.seguros.append([sala_atual])
+    print(self.seguros)
     for k in range(len(adj)):
       [x, y]   = index_pos(adj[k].index)
       if adj[k].index != sala_antiga.index:

@@ -62,7 +62,7 @@ def atualiza_salas(tabuleiro):
         sala.ouro = True
         sala.atualiza_brilho(True)
       else:
-        if randint(0, 9) <= 1 and x != 0:
+        if randint(0, 9) <= 1 and x != 12:
           sala.poco = True
       
   return tabuleiro
