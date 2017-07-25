@@ -1,11 +1,7 @@
-from random import randint
+from random             import randint
 
 def pr(value):
   return 'F' if value == False else 'T'
-
-
-
-
 
 class Sala:
   def __init__(self):
@@ -34,16 +30,21 @@ class Sala:
     self.passagens = i
   
   def __str__(self):
-    return "[{} Wumpus:{} | Ouro:{} | Poco:{} | Fedor: {} | Brisa: {}]".format(self.index, pr(self.wumpus), pr(self.ouro), pr(self.poco), pr(self.sensores[0]),pr(self.sensores[1]))
+    s = ''
+    [i, j] = index_pos(self.index)
+    if self.wumpus == True:       s += 'W'
+    if self.ouro == True:         s += 'O'
+    if self.poco == True:         s += 'P'
+    if self.sensores[0] == True:  s += 'F'
+    if self.sensores[1] == True:  s += 'B'
+    return '[{}, {} ({})]'.format(i, j, s)
     
-
 def cria_tabuleiro():
   wumpus_tabuleiro = [range(4), range(4), range(4), range(4)]
   for i in range(4):
     for j in range(4):
       wumpus_tabuleiro[i][j] = Sala()
       wumpus_tabuleiro[i][j].index = ((i * 4) + j)
-
   return wumpus_tabuleiro
 
 def atualiza_salas(tabuleiro):
@@ -113,3 +114,12 @@ def novo_tabuleiro():
   return array_tabuleiro
 
 
+def index_pos(index):
+  switcher = {
+    0:  [4, 1], 1:  [4, 2], 2:  [4, 3], 3:  [4, 4],
+    4:  [3, 1], 5:  [3, 2], 6:  [3, 3], 7:  [3, 4],
+    8:  [2, 1], 9:  [2, 2], 10: [2, 3], 11: [2, 4],
+    12: [1, 1], 13: [1, 2], 14: [1, 3], 15: [1, 4]
+    
+  }
+  return switcher.get(index, -1)

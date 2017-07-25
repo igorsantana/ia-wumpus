@@ -11,39 +11,34 @@ class Agente:
     self.base         = Base()
     self.tiro         = True
 
-
   def mover(self, todo):
     [_, loc] = todo.split(';')
     pos = index_pos(self.sala_atual.index)
     self.sala_antiga = self.sala_atual
-    if loc == 'D':
-      self.sala_atual =  get_sala(pos[0], pos[1] + 1)
-    if loc == 'E':
-      self.sala_atual =  get_sala(pos[0], pos[1] - 1)
-    if loc == 'C':
-      self.sala_atual =  get_sala(pos[0] + 1, pos[1])
-    if loc == 'B':
-      self.sala_atual =  get_sala(pos[0] - 1, pos[1])
-    if loc == 'X':
-      return 101010
-  def achou_ouro(self):
-    return self.ouro
+    if loc == 'D': self.sala_atual =  get_sala(pos[0], pos[1] + 1)
+    if loc == 'E': self.sala_atual =  get_sala(pos[0], pos[1] - 1)
+    if loc == 'C': self.sala_atual =  get_sala(pos[0] + 1, pos[1])
+    if loc == 'B': self.sala_atual =  get_sala(pos[0] - 1, pos[1])
+    return loc
+  
   def analisa_sala(self):
-    print(index_pos(self.sala_atual.index), self.sala_atual.sensores)
-    if self.sala_atual.ouro == True:
-      return 'OURO'
+    
     self.base.tell(self.sala_atual, self.sala_antiga)
+
   def movimentar(self):
-    todo = self.base.ask(self.sala_atual.index)
-    print(todo)
-    if todo.startswith('ACTION'):
-      [_, action, loc] = todo.split(';')
-      if action == 'PEGAR':
-        self.achou_ouro = True
+    if self.sala_atual.ouro == True: return 'OURO'
+
+    next = self.base.ask(self.sala_atual.index)
+    
+    if next.startswith('ACTION'):
+      [_, action, loc] = next.split(';')
       if action == 'ATIRAR':
         if(self.tiro == True):
           resultado = atirar(self.sala_atual.index, loc)
-          print('Tentou matar o Wumpus e: {}'.format(resultado))
         self.tiro = False
-    if todo.startswith('MOVE'):
-      self.mover(todo)
+        return 'TIRO;{};{}'.format(loc,resultado)
+    if next.startswith('MOVE'):
+      loc = self.mover(next)
+      if loc == 'X':
+        return 'STOP'
+      return 'FOI PARA A POSICAO {}, EM DIRECAO A CASA {}'.format(loc, index_pos(self.sala_atual.index))
