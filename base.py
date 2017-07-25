@@ -29,14 +29,14 @@ class Base:
   
   def in_arr(self, index_sala, arr):
     if arr == 'seguros':
-      return len(filter(lambda x: x.index == index_sala, self.seguros)) > 0
+      return len(list(filter(lambda x: x.index == index_sala, self.seguros))) > 0
     if arr == 'nvisitados':
-      return len(filter(lambda x: x.index == index_sala, self.seguros_n_visitados)) > 0
+      return len(list(filter(lambda x: x.index == index_sala, self.seguros_n_visitados))) > 0
   def analisa_adjacentes(self, adj):
     suspeitos = nao_visitados = visitados = []
-    suspeitos     = filter(lambda x: x.status.startswith('SUSPEITO'), adj)
-    nao_visitados = filter(lambda x: self.in_arr(x.index, 'nvisitados'), adj)
-    visitados     = filter(lambda x: self.in_arr(x.index, 'seguros'), adj)
+    suspeitos     = list(filter(lambda x: x.status.startswith('SUSPEITO'), adj))
+    nao_visitados = list(filter(lambda x: self.in_arr(x.index, 'nvisitados'), adj))
+    visitados     = list(filter(lambda x: self.in_arr(x.index, 'seguros'), adj))
     return [suspeitos, nao_visitados, visitados]
   def not_in_seguros_and_nvisitados(self, i, j):
     return (not self.in_arr(pos_index(i, j),'nvisitados')) and (not self.in_arr(pos_index(i, j),'seguros'))
@@ -45,7 +45,7 @@ class Base:
     
     if every('SEGURO', adj) == True:     
       to_go = menor_pass(adj).index
-      pode_ir = filter(lambda adj: (adj.index != to_go) and (not self.in_arr(adj.index, 'seguros')), adj)
+      pode_ir = list(filter(lambda adj: (adj.index != to_go) and (not self.in_arr(adj.index, 'seguros')), adj))
       self.seguros_n_visitados.extend(pode_ir)
       return 'MOVE;{}'.format(prox_direcao(index_atual, to_go))
     if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
@@ -76,7 +76,7 @@ class Base:
     self.seguros.extend([sala])
 
     if self.in_arr(sala.index, 'nvisitados'):
-      self.seguros_n_visitados = filter(lambda x: x.index != sala.index, self.seguros_n_visitados)
+      self.seguros_n_visitados = list(filter(lambda x: x.index != sala.index, self.seguros_n_visitados))
 
     print('------------------------------------------')
     print('Seguros:')

@@ -40,9 +40,9 @@ class Sala:
     return '[{}, {} ({})]'.format(i, j, s)
     
 def cria_tabuleiro():
-  wumpus_tabuleiro = [range(4), range(4), range(4), range(4)]
-  for i in range(4):
-    for j in range(4):
+  wumpus_tabuleiro = [list(range(4)), list(range(4)), list(range(4)), list(range(4))]
+  for i in list(range(4)):
+    for j in list(range(4)):
       wumpus_tabuleiro[i][j] = Sala()
       wumpus_tabuleiro[i][j].index = ((i * 4) + j)
   return wumpus_tabuleiro
@@ -55,8 +55,8 @@ def atualiza_salas(tabuleiro):
   while wumpus == 12: wumpus = randint(1, 15)
   while ouro == wumpus: ouro = randint(2, 15)
 
-  for i in range(4):
-    for j in range(4):
+  for i in list(range(4)):
+    for j in list(range(4)):
       sala = tabuleiro[i][j]
       x = ((i * 4) + j)
       if x == wumpus:
@@ -83,16 +83,10 @@ def adjacentes(tabuleiro, i, j):
     adjacentes.append(tabuleiro[i][j + 1])
   return adjacentes
 
-def print_tabuleiro(tabuleiro):
-  for i in range(4):
-    for j in range(4):
-      print tabuleiro[i][j],
-    print
-
 
 def atualiza_sensores(tabuleiro):
-  for i in range(4):
-    for j in range(4):
+  for i in list(range(4)):
+    for j in list(range(4)):
       wumpus = poco = False
       sala = tabuleiro[i][j]
       for a in adjacentes(tabuleiro, i, j):
@@ -108,8 +102,8 @@ def atualiza_sensores(tabuleiro):
 def novo_tabuleiro():
   array_tabuleiro = []
   tabuleiro = atualiza_sensores(atualiza_salas(cria_tabuleiro()))
-  for i in range(4):
-    for j in range(4):
+  for i in list(range(4)):
+    for j in list(range(4)):
       (tabuleiro[i][j]).adjacentes = adjacentes(tabuleiro, i, j)
       array_tabuleiro.append(tabuleiro[i][j])
 

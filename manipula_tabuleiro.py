@@ -1,5 +1,4 @@
-from __future__ import print_function
-from tabuleiro  import novo_tabuleiro, print_tabuleiro
+from tabuleiro  import novo_tabuleiro
 
 matriz_tabuleiro = novo_tabuleiro() 
 
