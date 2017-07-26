@@ -56,7 +56,7 @@ def cria_tabuleiro():
 def atualiza_salas(tabuleiro):
   wumpus  = randint(1, 15)
   ouro    = randint(1, 15)
-  max_poco = 4
+  max_poco = 3
   while wumpus == 12: wumpus = randint(1, 15)
   while ouro == wumpus: ouro = randint(2, 15)
 

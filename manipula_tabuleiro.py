@@ -1,9 +1,11 @@
 from tabuleiro  import novo_tabuleiro
 import os
+import time
 matriz_tabuleiro = novo_tabuleiro() 
 
 
-def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho):
+def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho, t):
+  time.sleep(t)
   os.system('cls' if os.name == 'nt' else 'clear')
   print('========================================================')
   for i in range(16):
@@ -29,6 +31,7 @@ def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho)
   print('\n\nCaminho: \n')
   print_array(caminho)
   print('\n')
+  
   
 def print_array(arr):
   for s in arr:

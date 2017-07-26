@@ -31,7 +31,7 @@ class Agente:
   
   def analisa_sala(self):
     self.base.tell(self.sala_atual, self.sala_antiga)
-    print_tt(self.base.tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho)
+    print_tt(self.base.tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0)
     
   def movimentar(self):
     if self.sala_atual.ouro == True:    return 'OURO'
@@ -50,7 +50,7 @@ class Agente:
             next_to_go  = self.caminho.pop() # OK
             dire        = prox_direcao(self.sala_atual.index, next_to_go.index) #OK
             self.mover('_;{}'.format(dire)) # OK
-            print_tt(self.base.tabuleiro_real, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho)
+            print_tt(self.base.tabuleiro_real, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 1)
             if (self.sala_atual.index in adj_indices):
               break
         return 'STOP'
