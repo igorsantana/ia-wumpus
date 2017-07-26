@@ -15,6 +15,13 @@ def menor_pass(adj):
     if adj[i].passagens < menor_adj.passagens: menor_adj = adj[i]
   return menor_adj
 
+def maior_peso(sensor, arr):
+  coringa = arr[0]
+  for i in range(1, len(arr)):
+    if ((sensor == 'wumpus') and (arr[i].peso_wumpus > coringa.peso_wumpus)) or ((sensor == 'poco') and (arr[i].peso_poco > coringa.peso_poco)):
+      coringa = arr[i]
+  return coringa
+
 def prox_direcao(atual, prox):
   if (atual - 4) == prox: return 'C'
   if (atual + 4) == prox: return 'B'
@@ -27,10 +34,16 @@ class Base:
     self.tabuleiro_real       = matriz_tabuleiro
     self.seguros              = []
     self.seguros_n_visitados  = []
+    self.blacklist            = []
   
+  def todos_suspeitos_print(self):
+    return map(lambda y: y. __str__() + '->(PP: {}/PW: {})'.format(y.peso_poco, y.peso_wumpus) ,list(filter(lambda x: x.peso_wumpus > 0 or x.peso_poco > 0 , self.tabuleiro)))
+  def todos_suspeitos(self):
+    return list(filter(lambda x: x.peso_wumpus > 0 or x.peso_poco > 0 , self.tabuleiro))
   def in_arr(self, index_sala, arr):
     if arr == 'seguros':    return len(list(filter(lambda x: x.index == index_sala, self.seguros))) > 0
     if arr == 'nvisitados': return len(list(filter(lambda x: x.index == index_sala, self.seguros_n_visitados))) > 0
+    if arr == 'blacklist':  return len(list(filter(lambda x: x.index == index_sala, self.blacklist))) > 0
   def analisa_adjacentes(self, adj):
     suspeitos     = nao_visitados = visitados = []
     suspeitos     = list(filter(lambda x: x.status.startswith('SUSPEITO'), adj))
@@ -46,6 +59,7 @@ class Base:
   def ask(self, index_atual):
 
     adj = adjacentes(self.tabuleiro, index_atual)
+
     if every('SEGURO', adj) == True:     
       to_go   = menor_pass(adj).index
       pode_ir = list(filter(lambda adj: (adj.index != to_go) and (not self.in_arr(adj.index, 'seguros')), adj))
@@ -54,42 +68,56 @@ class Base:
     if every('SUSPEITO-WUMPUS', adj) == True: return 'ACTION;{};{}'.format('ATIRAR', prox_direcao(index_atual, menor_pass(adj).index))
     if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
     
+
+    if len(self.seguros_n_visitados) == 0:
+      suspeitos_wumpus = list(filter(lambda casa: casa.peso_wumpus > 0, self.todos_suspeitos()))
+      suspeitos_poco = list(filter(lambda casa: casa.peso_poco > 0, self.todos_suspeitos()))
+      if len(suspeitos_wumpus) > 0:
+        atirar_em = maior_peso('wumpus', suspeitos_wumpus)
+        return 'ACTION;{};{}'.format('ROLLBACK', atirar_em.index)
+
+
     [suspeitos, nao_visitados, visitados] = self.analisa_adjacentes(adj)
     if len(suspeitos) <= (len(adj) - 1):
       if len(nao_visitados) > 0:
         return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(nao_visitados).index))
-      if len(visitados) > 0:
+      if (len(visitados) > 0):
         return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(visitados).index))
     
-    
-    return 'MOVE;X'
-
-
 
   def tell(self, sala, sala_antiga):
     adj = adjacentes(matriz_tabuleiro, sala.index)
     self.tabuleiro[sala.index].atualiza_passagens(self.tabuleiro[sala.index].passagens + 1)
     self.tabuleiro[sala.index].atualiza_status("SEGURO")
     self.seguros.extend([sala])
+    
+    if self.tabuleiro[sala.index].peso_poco > 0:    self.tabuleiro[sala.index].peso_poco = 0
+    if self.tabuleiro[sala.index].peso_wumpus > 0:  self.tabuleiro[sala.index].peso_wumpus = 0
 
     if self.in_arr(sala.index, 'nvisitados'):
-      self.seguros_n_visitados = list(filter(lambda x: x.index != sala.index, self.seguros_n_visitados))
-
-    print('------------------------------------------')
-    print('Seguros:')
-    print_array(self.seguros)
-    print('\n------------------------------------------')
-    print('Seguros n visitados:')
-    print_array(self.seguros_n_visitados)
-    print('\n------------------------------------------')
-
+      self.seguros_n_visitados  = list(filter(lambda x: x.index != sala.index, self.seguros_n_visitados))
+    
     for k in range(len(adj)):
       [x, y]   = index_pos(adj[k].index)
       if adj[k].index != sala_antiga.index:
         if ((sala.sensores[0] == True) and self.not_in_seguros_and_nvisitados(x, y)):
-          self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-WUMPUS")
+          self.tabuleiro[adj[k].index].atualiza_status("SUSPEITO-WUMPUS")
+
+          if (not self.in_arr(sala.index,'blacklist')):
+            self.tabuleiro[adj[k].index].aumenta_peso_wumpus(10)
+
         if ((sala.sensores[1] == True) and self.not_in_seguros_and_nvisitados(x, y)):                                  
-          self.tabuleiro[pos_index(x, y)].atualiza_status("SUSPEITO-POCO")
-        if (sala.sensores[0] == False) and (sala.sensores[1] == False): self.tabuleiro[pos_index(x, y)].atualiza_status("SEGURO")
+          self.tabuleiro[adj[k].index].atualiza_status("SUSPEITO-POCO")
+
+          if (not self.in_arr(sala.index,'blacklist')):
+            self.tabuleiro[adj[k].index].aumenta_peso_poco(10)
+
+        if (sala.sensores[0] == False) and (sala.sensores[1] == False): 
+
+          self.tabuleiro[adj[k].index].atualiza_status("SEGURO")
+          self.tabuleiro[adj[k].index].peso_wumpus = 0
+          self.tabuleiro[adj[k].index].peso_poco = 0
+    
+    self.blacklist.append(sala)
     return 0
   

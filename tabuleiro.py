@@ -1,4 +1,4 @@
-from random             import randint
+from random import randint
 
 def pr(value):
   return 'F' if value == False else 'T'
@@ -7,14 +7,16 @@ class Sala:
   def __init__(self):
     # Fedor, Brisa, Brilho, Grito
     self.sensores = [False,False,False,False]
-    self.adjacentes = []
-    self.wumpus     = False
-    self.ouro       = False
-    self.poco       = False
-    self.passagens  = 0
+    # self.adjacentes = []
+    self.wumpus       = False
+    self.ouro         = False
+    self.poco         = False
+    self.passagens    = 0
     # DESCONHECIDO, SUSPEITO-POCO, SUSPEITO-WUMPUS, SEGURO, PERIGO
-    self.status     = 'DESCONHECIDO'
-    self.index      = 0
+    self.status       = 'DESCONHECIDO'
+    self.index        = 0
+    self.peso_wumpus  = 0
+    self.peso_poco    = 0
 
   def atualiza_fedor(self, fedor):
     self.sensores[0] = fedor
@@ -28,7 +30,11 @@ class Sala:
     self.status = status
   def atualiza_passagens(self, i):
     self.passagens = i
-  
+  def aumenta_peso_wumpus(self, i):
+    self.peso_wumpus += i
+  def aumenta_peso_poco(self, i):
+    self.peso_poco += i
+
   def __str__(self):
     s = ''
     [i, j] = index_pos(self.index)
@@ -50,8 +56,7 @@ def cria_tabuleiro():
 def atualiza_salas(tabuleiro):
   wumpus  = randint(1, 15)
   ouro    = randint(1, 15)
-  
-
+  max_poco = 4
   while wumpus == 12: wumpus = randint(1, 15)
   while ouro == wumpus: ouro = randint(2, 15)
 
@@ -65,8 +70,9 @@ def atualiza_salas(tabuleiro):
         sala.ouro = True
         sala.atualiza_brilho(True)
       else:
-        if randint(0, 9) <= 1 and x != 12:
+        if randint(0, 9) <= 1 and x != 12 and max_poco > 0:
           sala.poco = True
+          max_poco -= 1
       
   return tabuleiro
 
@@ -104,7 +110,7 @@ def novo_tabuleiro():
   tabuleiro = atualiza_sensores(atualiza_salas(cria_tabuleiro()))
   for i in list(range(4)):
     for j in list(range(4)):
-      (tabuleiro[i][j]).adjacentes = adjacentes(tabuleiro, i, j)
+      # (tabuleiro[i][j]).adjacentes = adjacentes(tabuleiro, i, j)
       array_tabuleiro.append(tabuleiro[i][j])
   return array_tabuleiro
 
@@ -113,7 +119,7 @@ def novo_tabuleiro_vazio():
   tabuleiro = cria_tabuleiro()
   for i in list(range(4)):
     for j in list(range(4)):
-      (tabuleiro[i][j]).adjacentes = adjacentes(tabuleiro, i, j)
+      # (tabuleiro[i][j]).adjacentes = adjacentes(tabuleiro, i, j)
       array_tabuleiro.append(tabuleiro[i][j])
   return array_tabuleiro
 

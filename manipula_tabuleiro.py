@@ -1,22 +1,38 @@
 from tabuleiro  import novo_tabuleiro
-
+import os
 matriz_tabuleiro = novo_tabuleiro() 
 
 
-def print_tt(tabuleiro, index):
+def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho):
+  os.system('cls' if os.name == 'nt' else 'clear')
   print('========================================================')
   for i in range(16):
-    if(index == i):
-      print('\033[32m' + tabuleiro[i].__str__() + '\033[0m', end='\t')
+    if(matriz_tabuleiro[i].ouro == True):
+      print ('\033[93m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
+    elif (matriz_tabuleiro[i].poco == True):
+      print ('\033[94m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
+    elif (matriz_tabuleiro[i].wumpus == True):
+      print ('\033[91m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
+    elif(index == i):
+      print('\033[32m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
     else:
-      print(tabuleiro[i].__str__(), end='\t')
+      print(matriz_tabuleiro[i].__str__(), end='\t')
     if (i+1) % 4 == 0:
       print('\n')
   print('========================================================')
+  print('Seguros: \n')
+  print_array(seguros)
+  print('\n\nSeguros não visitados: \n')
+  print_array(seguros_n_visitados)
+  print('\n\nSuspeitos: \n')
+  print_array(suspeitos)
+  print('\n\nCaminho: \n')
+  print_array(caminho)
+  print('\n')
   
 def print_array(arr):
   for s in arr:
-    print(s, end='\t')  
+    print(s, end=' ')  
 
 def index_pos(index):
   switcher = {
