@@ -55,17 +55,21 @@ def get_sala(i, j):
 
 def get_wumpus(tabuleiro):
   for i in range(len(tabuleiro)):
-    if tabuleiro[i].wumpus == True:
-      return index_pos(tabuleiro[i].index)
-  return [-1, -1]
+    [x, y] = index_pos(i)
+    if get_sala(x,y).wumpus == True:
+      return tabuleiro[i].index
+  return -1
 
 def remove_wumpus_e_limpa(tabuleiro):
   for i in range(len(tabuleiro)):
-    tabuleiro[i].wumpus = False
-    tabuleiro[i].atualiza_grito(True)
-    tabuleiro[i].atualiza_fedor(False)
-    if tabuleiro[i].status == 'SUSPEITO-WUMPUS':
-      tabuleiro[i].atualiza_status('SEGURO')
+    [x, y] = index_pos(i)
+    sala = get_sala(x, y)
+    sala.wumpus = False
+    sala.atualiza_grito(True)
+    sala.atualiza_fedor(False)
+    if sala.status == 'SUSPEITO-WUMPUS':
+      sala.atualiza_status('SEGURO')
+      sala.peso_wumpus = 0
 
 def get_tabuleiro():
   return matriz_tabuleiro
@@ -91,23 +95,24 @@ def atirar(tabuleiro, index, direcao):
   resultado = 'ERROU'
   if direcao == 'C':
     for x in range(i , 5):
-      if([x, j] == get_wumpus(tabuleiro)):
+      if(pos_index(x, j) == get_wumpus(tabuleiro)):
         resultado = 'MATOU'
         break
   if direcao == 'B':
     for x in range(1, 4):
-      if([i - x, j] == get_wumpus(tabuleiro)):
+      if(pos_index(i - x, j) == get_wumpus(tabuleiro)):
         resultado = 'MATOU'
         break
   if direcao == 'D':
     for x in range(i + 1, 5):
-      if([i, x] == get_wumpus(tabuleiro)):
+      if(pos_index(i, x) == get_wumpus(tabuleiro)):
         resultado = 'MATOU'
         break
   if direcao == 'E':
     for x in range(1, 4):
-      if([i, j - x] == get_wumpus(tabuleiro)):
+      if(pos_index(i, j - x) == get_wumpus(tabuleiro)):
         resultado = 'MATOU'  
         break    
-  if resultado == 'MATOU': remove_wumpus_e_limpa(tabuleiro)
+  if resultado == 'MATOU': 
+    remove_wumpus_e_limpa(tabuleiro)
   return resultado

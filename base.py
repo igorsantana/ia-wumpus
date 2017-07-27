@@ -15,11 +15,15 @@ def menor_pass(adj):
     if adj[i].passagens < menor_adj.passagens: menor_adj = adj[i]
   return menor_adj
 
-def maior_peso(sensor, arr):
+def melhor_escolha(sensor, arr):
   coringa = arr[0]
   for i in range(1, len(arr)):
-    if ((sensor == 'wumpus') and (arr[i].peso_wumpus > coringa.peso_wumpus)) or ((sensor == 'poco') and (arr[i].peso_poco > coringa.peso_poco)):
-      coringa = arr[i]
+    if sensor == 'wumpus':
+      if (arr[i].peso_wumpus / len(adjacentes(matriz_tabuleiro, i))) > (coringa.peso_wumpus / len(adjacentes(matriz_tabuleiro, coringa.index))):
+        coringa = arr[i]
+    if sensor == 'poco':
+      if (arr[i].peso_poco / len(adjacentes(matriz_tabuleiro, i))) < (coringa.peso_poco / len(adjacentes(matriz_tabuleiro, coringa.index))):
+        coringa = arr[i]
   return coringa
 
 def prox_direcao(atual, prox):
@@ -35,6 +39,7 @@ class Base:
     self.seguros              = []
     self.seguros_n_visitados  = []
     self.blacklist            = []
+    self.num_flechas          =  1
   
   def todos_suspeitos_print(self):
     return map(lambda y: y. __str__() + '->(PP: {}/PW: {})'.format(y.peso_poco, y.peso_wumpus) ,list(filter(lambda x: x.peso_wumpus > 0 or x.peso_poco > 0 , self.tabuleiro)))
@@ -56,6 +61,9 @@ class Base:
     if status == 'SEGURO':
       self.tabuleiro[index].atualiza_status(status)
       self.seguros_n_visitados.append(self.tabuleiro[index])
+    if status == 'NUM_FLECHAS':
+      self.num_flechas = 0
+
   def ask(self, index_atual):
 
     adj = adjacentes(self.tabuleiro, index_atual)
@@ -65,16 +73,19 @@ class Base:
       pode_ir = list(filter(lambda adj: (adj.index != to_go) and (not self.in_arr(adj.index, 'seguros')), adj))
       self.seguros_n_visitados.extend(pode_ir)
       return 'MOVE;{}'.format(prox_direcao(index_atual, to_go))
-    if every('SUSPEITO-WUMPUS', adj) == True: return 'ACTION;{};{}'.format('ATIRAR', prox_direcao(index_atual, menor_pass(adj).index))
+    if every('SUSPEITO-WUMPUS', adj) == True: 
+      return 'ACTION;{};{};{}'.format('ROLLBACK','ATIRAR', menor_pass(adj).index)
     if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
     
-
     if len(self.seguros_n_visitados) == 0:
       suspeitos_wumpus = list(filter(lambda casa: casa.peso_wumpus > 0, self.todos_suspeitos()))
       suspeitos_poco = list(filter(lambda casa: casa.peso_poco > 0, self.todos_suspeitos()))
-      if len(suspeitos_wumpus) > 0:
-        atirar_em = maior_peso('wumpus', suspeitos_wumpus)
-        return 'ACTION;{};{}'.format('ROLLBACK', atirar_em.index)
+      if (len(suspeitos_wumpus) > 0) and (self.num_flechas > 0):
+        atirar_em = melhor_escolha('wumpus', suspeitos_wumpus)
+        return 'ACTION;{};{};{}'.format('ROLLBACK','ATIRAR', atirar_em.index)
+      if len(suspeitos_poco) > 0:
+        tentar_passar = melhor_escolha('poco', suspeitos_poco)
+        return 'ACTION;{};{};{}'.format('ROLLBACK','POCO', tentar_passar.index)
 
 
     [suspeitos, nao_visitados, visitados] = self.analisa_adjacentes(adj)

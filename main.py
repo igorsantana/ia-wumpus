@@ -1,7 +1,8 @@
 from agente             import Agente
-from manipula_tabuleiro import get_sala, print_tt, index_pos
+from manipula_tabuleiro import get_sala, print_tt, index_pos, print_array
 import time
-
+import os
+messages = []
 
 agente007 = Agente(get_sala(1, 1))
 
@@ -19,6 +20,8 @@ while True:
   if action == 'MORREU':
     print('Agente foi burro e morreu')
   if action == 'OURO' or action == 'STOP' or action == 'MORREU':
+    agente007.voltar()
+    
     break
   print(action)
   time.sleep(1)
