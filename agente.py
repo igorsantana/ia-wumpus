@@ -1,5 +1,7 @@
-from manipula_tabuleiro import index_pos, get_sala, atirar, print_tt, print_array, adjacentes
+from manipula_tabuleiro import index_pos, get_sala, atirar, print_tt, print_array, adjacentes, get_tabuleiro
 from base               import Base, prox_direcao, menor_pass
+
+matriz_tabuleiro = get_tabuleiro()
 
 def next_sala(loc, pos):
   if loc == 'D': return get_sala(pos[0], pos[1] + 1)
@@ -28,14 +30,15 @@ class Agente:
     self.to_back      = []
     self.goin_back    = False
 
-
   def voltar(self):
     self.goin_back = True
+    self.ouro = True
     while self.sala_atual.index != 12:
       next_to_go  = self.to_back.pop() 
       dire        = prox_direcao(self.sala_atual.index, next_to_go.index) 
       self.mover('_;{}'.format(dire)) 
-      print_tt(self.base.tabuleiro_real, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 1)
+      print('ACHOU OURO E ESTÁ VOLTANDO PARA [1,1]')
+      print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0.5, self.ouro)
       
   def mover(self, todo):
     [_, loc] = todo.split(';')
@@ -52,10 +55,13 @@ class Agente:
   
   def analisa_sala(self):
     self.base.tell(self.sala_atual, self.sala_antiga)
-    print_tt(self.base.tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0)
+    print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0, self.ouro)
     
   def movimentar(self):
-    if self.sala_atual.ouro == True:    return 'OURO'
+    if self.sala_atual.ouro == True:    
+      self.sala_atual.ouro = False
+      self.ouro == True
+      return 'OURO'
     if self.sala_atual.poco == True:    return 'MORREU'
     if self.sala_atual.wumpus == True:  return 'MORREU'
 
@@ -71,7 +77,8 @@ class Agente:
             next_to_go  = self.caminho.pop() 
             dire        = prox_direcao(self.sala_atual.index, next_to_go.index) 
             self.mover('_;{}'.format(dire)) 
-            print_tt(self.base.tabuleiro_real, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 1)
+            print('ESTA EM {} E VAI PARA A CASA {}'.format(index_pos(antiga.index), index_pos(self.sala_atual.index)))
+            print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 1, self.ouro)
             if (self.sala_atual.index in adj_indices): break
         if todo == 'ATIRAR':
           action = 'ATIRAR'

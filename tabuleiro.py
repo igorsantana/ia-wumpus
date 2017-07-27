@@ -18,6 +18,8 @@ class Sala:
     self.peso_wumpus  = 0
     self.peso_poco    = 0
 
+  def set_index(self, i):
+    self.index = i
   def atualiza_fedor(self, fedor):
     self.sensores[0] = fedor
   def atualiza_brisa(self, brisa):
@@ -43,7 +45,7 @@ class Sala:
     if self.poco == True:         s += 'P'
     if self.sensores[0] == True:  s += 'F'
     if self.sensores[1] == True:  s += 'B'
-    return '[{}, {} ({})]'.format(i, j, s)
+    return '{0:<10}'.format('({}, {}) {}'.format(i, j, s))
     
 def cria_tabuleiro():
   wumpus_tabuleiro = [list(range(4)), list(range(4)), list(range(4)), list(range(4))]
@@ -74,7 +76,6 @@ def atualiza_salas(tabuleiro):
         if randint(0, 9) <= 1 and x != 12 and max_poco > 0:
           sala.poco = True
           max_poco -= 1
-      
   return tabuleiro
 
 def adjacentes(tabuleiro, i, j):
@@ -102,7 +103,6 @@ def atualiza_sensores(tabuleiro):
       if wumpus: sala.atualiza_fedor(True)
       if poco: sala.atualiza_brisa(True)
     
-      
   return tabuleiro
 
 
@@ -133,3 +133,7 @@ def index_pos(index):
     
   }
   return switcher.get(index, -1)
+
+def pos_index(i, j):
+  pos = [[12, 13, 14, 15], [8, 9, 10, 11], [4, 5, 6, 7], [0, 1, 2, 3]]
+  return pos[i - 1][j - 1]

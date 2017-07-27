@@ -1,38 +1,44 @@
-from tabuleiro  import novo_tabuleiro
+from tabuleiro  import novo_tabuleiro, Sala
 import os
 import time
+
 matriz_tabuleiro = novo_tabuleiro() 
 
 
-def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho, t):
+def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho, t, tem_ouro):
   time.sleep(t)
   os.system('cls' if os.name == 'nt' else 'clear')
-  print('========================================================')
+  print('=========================================================')
   for i in range(16):
-    if(matriz_tabuleiro[i].ouro == True):
-      print ('\033[93m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
-    elif (matriz_tabuleiro[i].poco == True):
-      print ('\033[94m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
-    elif (matriz_tabuleiro[i].wumpus == True):
-      print ('\033[91m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
+    if(tabuleiro[i].ouro == True and tem_ouro == False):
+      print ('['+ '\033[93m' + tabuleiro[i].__str__() + '\033[0m' + ']', end='\t')
+    elif (tabuleiro[i].poco == True):
+      print ('['+'\033[94m' + tabuleiro[i].__str__() + '\033[0m' + ']', end='\t')
+    elif (tabuleiro[i].wumpus == True):
+      print ('['+'\033[91m' + tabuleiro[i].__str__() + '\033[0m' + ']', end='\t')
     elif(index == i):
-      print('\033[32m' + matriz_tabuleiro[i].__str__() + '\033[0m', end='\t')
+      if tem_ouro == True:
+        print ('['+'\033[93m' + tabuleiro[i].__str__() + '\033[0m' + ']', end='\t')
+      else:
+        print('['+ '\033[32m' + tabuleiro[i].__str__() + '\033[0m' + ']', end='\t')
     else:
-      print(matriz_tabuleiro[i].__str__(), end='\t')
+      print('['+ tabuleiro[i].__str__()+ ']', end='\t')
     if (i+1) % 4 == 0:
       print('\n')
-  print('========================================================')
-  print('Seguros: \n')
-  print_array(seguros)
-  print('\n\nSeguros não visitados: \n')
-  print_array(seguros_n_visitados)
-  print('\n\nSuspeitos: \n')
-  print_array(suspeitos)
-  print('\n\nCaminho: \n')
-  print_array(caminho)
-  print('\n')
+  print('=========================================================')
+  # print('Seguros: \n')
+  # print_array(seguros)
+  # print('\n\nSeguros não visitados: \n')
+  # print_array(seguros_n_visitados)
+  # print('\n\nSuspeitos: \n')
+  # print_array(suspeitos)
+  # print('\n\nCaminho: \n')
+  # print_array(caminho)
+  # print('\n')
   
   
+
+
 def print_array(arr):
   for s in arr:
     print(s, end=' ')  
@@ -76,17 +82,18 @@ def get_tabuleiro():
 
 def adjacentes(tabuleiro, indice):
   adjacentes = []
+  
   if indice > 3:
     [i, j] = index_pos(indice - 4)
     adjacentes.append(tabuleiro[pos_index(i, j)])
   if indice < 12:
     [i, j] = index_pos(indice + 4)
     adjacentes.append(tabuleiro[pos_index(i, j)])
-  if indice % 4 != 0:
-    [i, j] = index_pos(indice - 1)
-    adjacentes.append(tabuleiro[pos_index(i, j)])
   if (indice + 1) % 4 != 0:
     [i, j] = index_pos(indice + 1)
+    adjacentes.append(tabuleiro[pos_index(i, j)])
+  if indice % 4 != 0:
+    [i, j] = index_pos(indice - 1)
     adjacentes.append(tabuleiro[pos_index(i, j)])
   return adjacentes
 
@@ -116,3 +123,37 @@ def atirar(tabuleiro, index, direcao):
   if resultado == 'MATOU': 
     remove_wumpus_e_limpa(tabuleiro)
   return resultado
+
+def set_matriz_tabuleiro(arr_):
+  novo_tabuleiro = list(range(16))
+  for i in range(len(arr_)):
+    novo_tabuleiro[i] = Sala()
+    novo_tabuleiro[i].set_index(i)
+    if arr_[i] == 'O':
+      # print('OURO ' + str(i))
+      novo_tabuleiro[i].ouro = True
+      novo_tabuleiro[i].atualiza_brilho(True)
+    if arr_[i] == 'P':
+      # print('POCO ' + str(i))
+      novo_tabuleiro[i].poco = True
+    if arr_[i] == 'W':
+      # print('WUMPUS ' + str(i))
+      novo_tabuleiro[i].wumpus = True
+  del matriz_tabuleiro[:]
+  new_Trab = atualiza_sensores(novo_tabuleiro)
+  for i in new_Trab:
+    matriz_tabuleiro.append(i)
+  
+
+
+def atualiza_sensores(tabuleiro):
+  for i in list(range(16)):
+    wumpus = poco = False
+    sala   = tabuleiro[i]
+    for a in adjacentes(tabuleiro, i):
+      if a.wumpus: wumpus = True
+      if a.poco: poco = True
+    if wumpus: sala.atualiza_fedor(True)
+    if poco: sala.atualiza_brisa(True)
+    
+  return tabuleiro

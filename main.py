@@ -1,29 +1,49 @@
 from agente             import Agente
-from manipula_tabuleiro import get_sala, print_tt, index_pos, print_array
+from manipula_tabuleiro import get_sala, print_tt, index_pos, print_array, set_matriz_tabuleiro
 import time
 import os
-messages = []
 
-agente007 = Agente(get_sala(1, 1))
+caso_erro =                 [ '','','','',
+                              '','','','',
+                              'P','','','',
+                              '','O','','' ]
+
+caso_teste_todos_seguros =  [ '','','','',
+                              '','','','',
+                              '','','','',
+                              '','','','O' ]
+
+caso_teste_probabilidade =  [ '','','P','',
+                              '','','','',
+                              '','','','O',
+                              '','','P','' ]
+
+caso_teste_fronteira =      [ '','P','O','',
+                              '','P','','',
+                              '','','W','',
+                              '','','P','' ]
+
+set_matriz_tabuleiro(caso_erro)
+agente = Agente(get_sala(1, 1))
 
 while True:
   
-  agente007.analisa_sala()
-  action = agente007.movimentar()
-  if action == 'TIRO':
-    [_, loc, resultado] = action.split(';')
-    print('Atirou em {} e {}'.format(loc, resultado))
+  agente.analisa_sala()
+  action = agente.movimentar()
+  if action.startswith('ESTA'):
+    print(action)
+  if action.startswith('AGENTE'):
+    print(action)
   if action == 'STOP':
     print('Parou o movimento por causa de implementacao')
   if action == 'OURO':
-    print('Achou ouro na casa {}'.format(index_pos(agente007.sala_atual.index)))
+    print('Achou ouro na casa {}'.format(index_pos(agente.sala_atual.index)))
   if action == 'MORREU':
-    print('Agente foi burro e morreu')
+    print('A inteligência não foi suficiente para achar o ouro.')
+  if action == 'OURO':
+    agente.voltar()
   if action == 'OURO' or action == 'STOP' or action == 'MORREU':
-    agente007.voltar()
-    
     break
-  print(action)
   time.sleep(1)
   
   

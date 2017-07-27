@@ -15,6 +15,8 @@ def menor_pass(adj):
     if adj[i].passagens < menor_adj.passagens: menor_adj = adj[i]
   return menor_adj
 
+
+
 def melhor_escolha(sensor, arr):
   coringa = arr[0]
   for i in range(1, len(arr)):
@@ -35,11 +37,11 @@ def prox_direcao(atual, prox):
 class Base:
   def __init__(self):
     self.tabuleiro            = novo_tabuleiro_vazio()
-    self.tabuleiro_real       = matriz_tabuleiro
     self.seguros              = []
     self.seguros_n_visitados  = []
     self.blacklist            = []
     self.num_flechas          =  1
+  
   
   def todos_suspeitos_print(self):
     return map(lambda y: y. __str__() + '->(PP: {}/PW: {})'.format(y.peso_poco, y.peso_wumpus) ,list(filter(lambda x: x.peso_wumpus > 0 or x.peso_poco > 0 , self.tabuleiro)))
@@ -78,8 +80,8 @@ class Base:
     if every('SUSPEITO-POCO', adj) == True:   return 'MOVE;{}'.format(prox_direcao(index_atual, menor_pass(adj).index))
     
     if len(self.seguros_n_visitados) == 0:
-      suspeitos_wumpus = list(filter(lambda casa: casa.peso_wumpus > 0, self.todos_suspeitos()))
-      suspeitos_poco = list(filter(lambda casa: casa.peso_poco > 0, self.todos_suspeitos()))
+      suspeitos_wumpus  = list(filter(lambda casa: casa.peso_wumpus > 0, self.todos_suspeitos()))
+      suspeitos_poco    = list(filter(lambda casa: casa.peso_poco > 0, self.todos_suspeitos()))
       if (len(suspeitos_wumpus) > 0) and (self.num_flechas > 0):
         atirar_em = melhor_escolha('wumpus', suspeitos_wumpus)
         return 'ACTION;{};{};{}'.format('ROLLBACK','ATIRAR', atirar_em.index)
