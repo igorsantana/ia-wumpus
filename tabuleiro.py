@@ -1,3 +1,4 @@
+#!-*- coding: utf8 -*-
 from random import randint
 
 def pr(value):

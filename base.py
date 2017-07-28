@@ -1,3 +1,4 @@
+#!-*- coding: utf8 -*-
 from tabuleiro          import novo_tabuleiro_vazio
 from manipula_tabuleiro import index_pos, pos_index, get_sala, get_tabuleiro, adjacentes, print_array
 

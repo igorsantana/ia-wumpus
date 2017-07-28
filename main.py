@@ -1,45 +1,26 @@
+
+#!-*- coding: utf8 -*-
 from agente             import Agente
 from manipula_tabuleiro import get_sala, print_tt, index_pos, print_array, set_matriz_tabuleiro
 import time
 import os
+import sys
 
-# caso_erro =                 [ '','','','',
-#                               '','','','',
-#                               'P','','','',
-#                               '','O','','' ]
-
-# caso_chutecerto =           [ '','','','',
-#                               '','','','',
-#                               'O','','','',
-#                               '','P','','' ]                          
-
-caso_teste_todos_seguros =  [ 'O','','','',
-                              '','','','',
-                              '','','','',
-                              '','','','' ]
-
-caso_teste_todos_seguros2 =  [ '','','','',
-                              '','','','',
-                              '','','','',
-                              '','','','O' ]
-
-caso_teste_probabilidade =  [ '','','P','',
-                              '','','','',
-                              '','','','O',
-                              '','','P','' ]
-
-caso_teste_fronteira =      [ '','P','O','',
-                              '','P','','',
-                              '','','W','',
-                              '','','P','' ]
+def argumento_matriz(arg):
+  t1 =  ['O','','','','','','','','','','','','','','','']
+  t2 =  ['','','','','','','','','','','','','','','','O']
+  t3 =  ['','','','','','','','','P','','','','','O','','']
+  t4 =  ['','','','','','','','','O','','','','','P','','']
+  t5 =  ['','','P','','','','','','','','','O','','','P','']
+  t6 =  ['','P','O','','','P','','','','','W','','','','P','']
+  switcher = { 't1': t1, 't2': t2, 't3': t3, 't4': t4, 't5': t5, 't6': t6 }
+  
+  return switcher.get(arg, arg)
 
 
-caso_x2 =                 [ '','','W','O',
-                            '','','','P',
-                            '','','','',
-                            '','','','' ]
-
-set_matriz_tabuleiro(caso_x2)
+matriz = argumento_matriz(sys.argv[1] if len(sys.argv) > 1 else 'x')
+if matriz != 'x':
+  set_matriz_tabuleiro(matriz)
 agente = Agente(get_sala(1, 1))
 
 while True:
@@ -55,7 +36,7 @@ while True:
   if action == 'OURO':
     print('Achou ouro na casa {}'.format(index_pos(agente.sala_atual.index)))
   if action == 'MORREU':
-    print('A inteligência não foi suficiente para achar o ouro.')
+    print('A inteligencia não foi suficiente para achar o ouro.')
   if action == 'OURO':
     agente.voltar()
     if agente.tiro == True:
@@ -65,6 +46,6 @@ while True:
     
   if action == 'OURO' or action == 'STOP' or action == 'MORREU':
     break
-  time.sleep(0.25)
+  time.sleep(1)
   
   

@@ -1,3 +1,4 @@
+#!-*- coding: utf8 -*-
 from tabuleiro  import novo_tabuleiro, Sala
 import os
 import time

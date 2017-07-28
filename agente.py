@@ -1,3 +1,4 @@
+#!-*- coding: utf8 -*-
 from manipula_tabuleiro import index_pos, get_sala, atirar, print_tt, print_array, adjacentes, get_tabuleiro
 from base               import Base, prox_direcao, menor_pass
 
@@ -49,14 +50,9 @@ class Agente:
           break
       print('ACHOU OURO E ESTÁ VOLTANDO PARA [1,1]')
       self.mover('_;{}'.format(dire))
-      print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0.5, self.ouro)
+      print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 1, self.ouro)
       if(self.sala_atual.index == 12):
         break
-      # achar o primeiro adjacente na lista do caminho
-      # next_to_go  = self.to_back.pop() 
-      # dire        = prox_direcao(self.sala_atual.index, next_to_go.index) 
-      # self.mover('_;{}'.format(dire)) 
-      # print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0.5, self.ouro)
       
   def mover(self, todo):
     [_, loc] = todo.split(';')
