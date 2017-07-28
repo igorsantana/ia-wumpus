@@ -9,7 +9,7 @@ matriz_tabuleiro = novo_tabuleiro()
 def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho, t, tem_ouro):
   time.sleep(t)
   os.system('cls' if os.name == 'nt' else 'clear')
-  print('=============================================================   Legenda:')
+  print(Fore.WHITE + '=============================================================   Legenda:')
   for i in range(16):
     if(tabuleiro[i].ouro == True and tem_ouro == False):
       print ( Fore.YELLOW + '[' + tabuleiro[i].__str__() + ']', end='\t')
@@ -26,15 +26,15 @@ def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho,
       print(Fore.WHITE + '[' + tabuleiro[i].__str__() + ']', end='\t')
     if (i+1) % 4 == 0:
       if i == 3:
-        print('\033[94m[ POÇO ]\033[0m', end='')
+        print(Fore.BLUE + '[ POÇO ]', end='')
       elif i == 7:
-        print('\033[91m[ WUMPUS ]\033[0m', end='')
+        print(Fore.RED + '[ WUMPUS ]', end='')
       elif i == 11:
-        print('\033[93m[ OURO ]\033[0m', end='')
+        print(Fore.YELLOW + '[ OURO ]', end='')
       elif i == 15:
-        print('\033[32m[ AGENTE ]\033[0m', end='')
+        print(Fore.GREEN + '[ AGENTE ]', end='')
       print('\n')
-  print('=============================================================')
+  print(Fore.WHITE + '=============================================================')
   
   
   # print('Seguros: \n')
