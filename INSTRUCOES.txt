@@ -1,0 +1,16 @@
+Alunos: Igor Santana (83154)
+		Leandro Flores (84150)
+
+Foi implementado usando a Linguagem Python 3.
+
+Intruções para a execução:
+	- Para executar os testes executados durante a apresentação, basta executar o seguinte comando:
+		python main.py t1
+		python main.py t2
+		python main.py t3
+		python main.py t4
+		python main.py t5
+		python main.py t6
+
+	- Para gerar um mundo aleatório, basta executar o comando:
+		python main.py
