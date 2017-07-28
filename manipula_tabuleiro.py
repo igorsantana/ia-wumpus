@@ -8,7 +8,7 @@ matriz_tabuleiro = novo_tabuleiro()
 def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho, t, tem_ouro):
   time.sleep(t)
   os.system('cls' if os.name == 'nt' else 'clear')
-  print('=========================================================')
+  print('=============================================================   Legenda:')
   for i in range(16):
     if(tabuleiro[i].ouro == True and tem_ouro == False):
       print ('['+ '\033[93m' + tabuleiro[i].__str__() + '\033[0m' + ']', end='\t')
@@ -24,8 +24,19 @@ def print_tt(tabuleiro, index, seguros, seguros_n_visitados, suspeitos, caminho,
     else:
       print('['+ tabuleiro[i].__str__()+ ']', end='\t')
     if (i+1) % 4 == 0:
+      if i == 3:
+        print('\033[94m[ POÇO ]\033[0m', end='')
+      elif i == 7:
+        print('\033[91m[ WUMPUS ]\033[0m', end='')
+      elif i == 11:
+        print('\033[93m[ OURO ]\033[0m', end=' ou ')
+        print('\033[93m[ AGENTE COM OURO ]\033[0m', end='')
+      elif i == 15:
+        print('\033[32m[ AGENTE SEM OURO ]\033[0m', end='')
       print('\n')
-  print('=========================================================')
+  print('=============================================================')
+  
+  
   # print('Seguros: \n')
   # print_array(seguros)
   # print('\n\nSeguros não visitados: \n')

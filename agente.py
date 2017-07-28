@@ -17,6 +17,12 @@ def list_op(l_ist):
     else: to_return.pop()
   return to_return
 
+def is_adjacente(index, adj):
+  to_return = -1
+  result = list(filter(lambda x: x.index == index, adj))
+  if(len(result)) > 0:
+    to_return = result[0].index
+  return to_return
 
 class Agente:
   def __init__(self, atual):
@@ -33,12 +39,24 @@ class Agente:
   def voltar(self):
     self.goin_back = True
     self.ouro = True
-    while self.sala_atual.index != 12:
-      next_to_go  = self.to_back.pop() 
-      dire        = prox_direcao(self.sala_atual.index, next_to_go.index) 
-      self.mover('_;{}'.format(dire)) 
+
+    while True:
+      adj = adjacentes(self.base.tabuleiro, self.sala_atual.index) 
+      for i in range(len(self.caminho)):
+        adjacente = is_adjacente(self.caminho[i].index, adj) 
+        if adjacente != -1:
+          dire = prox_direcao(self.sala_atual.index, adjacente)
+          break
       print('ACHOU OURO E ESTÁ VOLTANDO PARA [1,1]')
+      self.mover('_;{}'.format(dire))
       print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0.5, self.ouro)
+      if(self.sala_atual.index == 12):
+        break
+      # achar o primeiro adjacente na lista do caminho
+      # next_to_go  = self.to_back.pop() 
+      # dire        = prox_direcao(self.sala_atual.index, next_to_go.index) 
+      # self.mover('_;{}'.format(dire)) 
+      # print_tt(matriz_tabuleiro, self.sala_atual.index, self.base.seguros, self.base.seguros_n_visitados, self.base.todos_suspeitos_print(), self.caminho, 0.5, self.ouro)
       
   def mover(self, todo):
     [_, loc] = todo.split(';')
@@ -88,6 +106,7 @@ class Agente:
 
       if action == 'ATIRAR':
         if(self.tiro == True): 
+          self.tiro = False
           self.base.afirma('NUM_FLECHAS', 0)
           resultado = atirar(self.base.tabuleiro, self.sala_atual.index, loc)
           self.base.afirma('SEGURO', next_sala(loc, index_pos(self.sala_atual.index)).index)

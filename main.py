@@ -3,12 +3,22 @@ from manipula_tabuleiro import get_sala, print_tt, index_pos, print_array, set_m
 import time
 import os
 
-caso_erro =                 [ '','','','',
-                              '','','','',
-                              'P','','','',
-                              '','O','','' ]
+# caso_erro =                 [ '','','','',
+#                               '','','','',
+#                               'P','','','',
+#                               '','O','','' ]
 
-caso_teste_todos_seguros =  [ '','','','',
+# caso_chutecerto =           [ '','','','',
+#                               '','','','',
+#                               'O','','','',
+#                               '','P','','' ]                          
+
+caso_teste_todos_seguros =  [ 'O','','','',
+                              '','','','',
+                              '','','','',
+                              '','','','' ]
+
+caso_teste_todos_seguros2 =  [ '','','','',
                               '','','','',
                               '','','','',
                               '','','','O' ]
@@ -23,7 +33,13 @@ caso_teste_fronteira =      [ '','P','O','',
                               '','','W','',
                               '','','P','' ]
 
-set_matriz_tabuleiro(caso_erro)
+
+caso_x2 =                 [ '','','W','O',
+                            '','','','P',
+                            '','','','',
+                            '','','','' ]
+
+set_matriz_tabuleiro(caso_x2)
 agente = Agente(get_sala(1, 1))
 
 while True:
@@ -42,8 +58,13 @@ while True:
     print('A inteligência não foi suficiente para achar o ouro.')
   if action == 'OURO':
     agente.voltar()
+    if agente.tiro == True:
+      print('Finalizou o jogo com 1000 pontos')
+    else:
+      print('Finalizou o jogo com 990 pontos')
+    
   if action == 'OURO' or action == 'STOP' or action == 'MORREU':
     break
-  time.sleep(1)
+  time.sleep(0.25)
   
   
