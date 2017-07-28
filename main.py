@@ -1,10 +1,11 @@
-
-#!-*- coding: utf8 -*-
 from agente             import Agente
+from colorama import init
 from manipula_tabuleiro import get_sala, print_tt, index_pos, print_array, set_matriz_tabuleiro
 import time
 import os
 import sys
+
+init()
 
 def argumento_matriz(arg):
   t1 =  ['O','','','','','','','','','','','','','','','']
@@ -47,5 +48,4 @@ while True:
   if action == 'OURO' or action == 'STOP' or action == 'MORREU':
     break
   time.sleep(1)
-  
   
